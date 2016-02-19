@@ -12,7 +12,7 @@
 
 
 PubSubClient::PubSubClient(Client& client) :
-    _client(&client),
+    _client(client),
     nextMsgId(0),
     lastOutActivity(0),
     lastInActivity(0),
@@ -42,9 +42,9 @@ bool PubSubClient::connect(const char *id, const char *user, const char *pass, c
         int result = 0;
 
         if (domain != NULL) {
-            result = _client->connect(this->domain, this->port);
+            result = _client.connect(this->domain, this->port);
         } else {
-            result = _client->connect(this->ip, this->port);
+            result = _client.connect(this->ip, this->port);
         }
         if (result == 1) {
             nextMsgId = 1;
@@ -99,11 +99,11 @@ bool PubSubClient::connect(const char *id, const char *user, const char *pass, c
 
             lastInActivity = lastOutActivity = millis();
 
-            while (!_client->available()) {
+            while (!_client.available()) {
                 unsigned long t = millis();
                 if (t-lastInActivity >= ((int32_t) MQTT_SOCKET_TIMEOUT*1000UL)) {
                     _state = MQTT_CONNECTION_TIMEOUT;
-                    _client->stop();
+                    _client.stop();
                     return false;
                 }
             }
@@ -120,7 +120,7 @@ bool PubSubClient::connect(const char *id, const char *user, const char *pass, c
                     _state = buffer[3];
                 }
             }
-            _client->stop();
+            _client.stop();
         } else {
             _state = MQTT_CONNECT_FAILED;
         }
@@ -132,13 +132,13 @@ bool PubSubClient::connect(const char *id, const char *user, const char *pass, c
 // reads a byte into result
 bool PubSubClient::readByte(uint8_t * result) {
    uint32_t previousMillis = millis();
-   while(!_client->available()) {
+   while(!_client.available()) {
      uint32_t currentMillis = millis();
      if(currentMillis - previousMillis >= ((int32_t) MQTT_SOCKET_TIMEOUT * 1000)){
        return false;
      }
    }
-   *result = _client->read();
+   *result = _client.read();
    return true;
 }
 
@@ -167,7 +167,7 @@ uint16_t PubSubClient::readPacket(uint8_t* lengthLength) {
         if (len == 6) {
             // Invalid remaining length encoding - kill the connection
             _state = MQTT_DISCONNECTED;
-            _client->stop();
+            _client.stop();
             return 0;
         }
         if(!readByte(&digit)) return 0;
@@ -215,18 +215,18 @@ bool PubSubClient::loop() {
         if ((t - lastInActivity > MQTT_KEEPALIVE*1000UL) || (t - lastOutActivity > MQTT_KEEPALIVE*1000UL)) {
             if (pingOutstanding) {
                 this->_state = MQTT_CONNECTION_TIMEOUT;
-                _client->stop();
+                _client.stop();
                 return false;
             } else {
                 buffer[0] = MQTTPINGREQ;
                 buffer[1] = 0;
-                _client->write(buffer,2);
+                _client.write(buffer,2);
                 lastOutActivity = t;
                 lastInActivity = t;
                 pingOutstanding = true;
             }
         }
-        if (_client->available()) {
+        if (_client.available()) {
             uint8_t llen;
             uint16_t len = readPacket(&llen);
             uint16_t msgId = 0;
@@ -250,7 +250,7 @@ bool PubSubClient::loop() {
                             buffer[1] = 2;
                             buffer[2] = (msgId >> 8);
                             buffer[3] = (msgId & 0xFF);
-                            _client->write(buffer,4);
+                            _client.write(buffer,4);
                             lastOutActivity = t;
 
                         } else {
@@ -261,7 +261,7 @@ bool PubSubClient::loop() {
                 } else if (type == MQTTPINGREQ) {
                     buffer[0] = MQTTPINGRESP;
                     buffer[1] = 0;
-                    _client->write(buffer,2);
+                    _client.write(buffer,2);
                 } else if (type == MQTTPINGRESP) {
                     pingOutstanding = false;
                 }
@@ -343,10 +343,10 @@ bool PubSubClient::publish_P(const char* topic, const uint8_t* payload, unsigned
 
     pos = writeString(topic,buffer,pos);
 
-    rc += _client->write(buffer,pos);
+    rc += _client.write(buffer,pos);
 
     for (i=0;i<plength;i++) {
-        rc += _client->write((char)pgm_read_byte_near(payload + i));
+        rc += _client.write((char)pgm_read_byte_near(payload + i));
     }
 
     lastOutActivity = millis();
@@ -383,14 +383,14 @@ bool PubSubClient::write(uint8_t header, uint8_t* buf, uint16_t length) {
     bool result = true;
     while((bytesRemaining > 0) && result) {
         bytesToWrite = (bytesRemaining > MQTT_MAX_TRANSFER_SIZE)?MQTT_MAX_TRANSFER_SIZE:bytesRemaining;
-        rc = _client->write(writeBuf,bytesToWrite);
+        rc = _client.write(writeBuf,bytesToWrite);
         result = (rc == bytesToWrite);
         bytesRemaining -= rc;
         writeBuf += rc;
     }
     return result;
 #else
-    rc = _client->write(buf+(4-llen),length+1+llen);
+    rc = _client.write(buf+(4-llen),length+1+llen);
     lastOutActivity = millis();
     return (rc == 1+llen+length);
 #endif
@@ -446,9 +446,9 @@ bool PubSubClient::unsubscribe(const char* topic) {
 void PubSubClient::disconnect() {
     buffer[0] = MQTTDISCONNECT;
     buffer[1] = 0;
-    _client->write(buffer,2);
+    _client.write(buffer,2);
     _state = MQTT_DISCONNECTED;
-    _client->stop();
+    _client.stop();
     lastInActivity = lastOutActivity = millis();
 }
 
@@ -467,17 +467,12 @@ uint16_t PubSubClient::writeString(const char* string, uint8_t* buf, uint16_t po
 
 
 bool PubSubClient::connected() {
-    bool rc;
-    if (_client == NULL ) {
-        rc = false;
-    } else {
-        rc = (int)_client->connected();
-        if (!rc) {
-            if (this->_state == MQTT_CONNECTED) {
-                this->_state = MQTT_CONNECTION_LOST;
-                _client->flush();
-                _client->stop();
-            }
+    bool rc = (int)_client.connected();
+    if (!rc) {
+        if (this->_state == MQTT_CONNECTED) {
+            this->_state = MQTT_CONNECTION_LOST;
+            _client.flush();
+            _client.stop();
         }
     }
     return rc;

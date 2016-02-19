@@ -82,7 +82,7 @@ class Stream;
 
 class PubSubClient {
 private:
-   Client* _client;
+   Client& _client;
    uint8_t buffer[MQTT_MAX_PACKET_SIZE];
    uint16_t nextMsgId;
    unsigned long lastOutActivity;
