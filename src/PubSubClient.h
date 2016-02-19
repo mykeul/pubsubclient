@@ -89,16 +89,12 @@ private:
    unsigned long lastInActivity;
    bool pingOutstanding;
    MQTT_CALLBACK_SIGNATURE;
-   uint16_t readPacket(uint8_t*);
-   boolean readByte(uint8_t * result);
-   boolean readByte(uint8_t * result, uint16_t * index);
-   boolean write(uint8_t header, uint8_t* buf, uint16_t length);
-   uint16_t writeString(const char* string, uint8_t* buf, uint16_t pos);
    IPAddress ip;
    const char* domain;
    uint16_t port;
    Stream* stream;
    int _state;
+
 public:
    PubSubClient();
    PubSubClient(Client& client);
@@ -115,6 +111,7 @@ public:
    PubSubClient(const char*, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client);
    PubSubClient(const char*, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client, Stream&);
 
+public:
    PubSubClient& setServer(IPAddress ip, uint16_t port);
    PubSubClient& setServer(uint8_t * ip, uint16_t port);
    PubSubClient& setServer(const char * domain, uint16_t port);
@@ -122,6 +119,7 @@ public:
    PubSubClient& setClient(Client& client);
    PubSubClient& setStream(Stream& stream);
 
+public:
    boolean connect(const char* id);
    boolean connect(const char* id, const char* user, const char* pass);
    boolean connect(const char* id, const char* willTopic, uint8_t willQos, boolean willRetain, const char* willMessage);
@@ -138,7 +136,17 @@ public:
    boolean loop();
    boolean connected();
    int state();
+
+private:
+   uint16_t readPacket(uint8_t*);
+   boolean readByte(uint8_t * result);
+   boolean readByte(uint8_t * result, uint16_t * index);
+   boolean write(uint8_t header, uint8_t* buf, uint16_t length);
+   uint16_t writeString(const char* string, uint8_t* buf, uint16_t pos);
+
+private:
+   PubSubClient& operator=(const PubSubClient&);
+   PubSubClient(const PubSubClient&);
 };
 
-
-#endif
+#endif//PubSubClient_h
