@@ -96,27 +96,27 @@ private:
    int _state;
 
 public:
-   PubSubClient();
-   PubSubClient(Client& client);
-   PubSubClient(const IPAddress&, uint16_t, Client& client);
-   PubSubClient(const IPAddress&, uint16_t, Client& client, Stream&);
-   PubSubClient(const IPAddress&, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client);
-   PubSubClient(const IPAddress&, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client, Stream&);
-   PubSubClient(uint8_t *, uint16_t, Client& client);
-   PubSubClient(uint8_t *, uint16_t, Client& client, Stream&);
-   PubSubClient(uint8_t *, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client);
-   PubSubClient(uint8_t *, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client, Stream&);
-   PubSubClient(const char*, uint16_t, Client& client);
-   PubSubClient(const char*, uint16_t, Client& client, Stream&);
-   PubSubClient(const char*, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client);
-   PubSubClient(const char*, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client, Stream&);
+   PubSubClient() __attribute__ ((deprecated));
+   explicit PubSubClient(Client& client);
+   PubSubClient(const IPAddress&, uint16_t, Client& client) __attribute__ ((deprecated));
+   PubSubClient(const IPAddress&, uint16_t, Client& client, Stream&) __attribute__ ((deprecated));
+   PubSubClient(const IPAddress&, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client) __attribute__ ((deprecated));
+   PubSubClient(const IPAddress&, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client, Stream&) __attribute__ ((deprecated));
+   PubSubClient(uint8_t *, uint16_t, Client& client) __attribute__ ((deprecated));
+   PubSubClient(uint8_t *, uint16_t, Client& client, Stream&) __attribute__ ((deprecated));
+   PubSubClient(uint8_t *, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client) __attribute__ ((deprecated));
+   PubSubClient(uint8_t *, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client, Stream&) __attribute__ ((deprecated));
+   PubSubClient(const char*, uint16_t, Client& client) __attribute__ ((deprecated));
+   PubSubClient(const char*, uint16_t, Client& client, Stream&) __attribute__ ((deprecated));
+   PubSubClient(const char*, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client) __attribute__ ((deprecated));
+   PubSubClient(const char*, uint16_t, MQTT_CALLBACK_SIGNATURE,Client& client, Stream&) __attribute__ ((deprecated));
 
 public:
    PubSubClient& setServer(const IPAddress& ip, uint16_t port);
-   PubSubClient& setServer(uint8_t * ip, uint16_t port);
+   PubSubClient& setServer(uint8_t * ip, uint16_t port) __attribute__ ((deprecated)); // should use the IPAddress version
    PubSubClient& setServer(const char * domain, uint16_t port);
    PubSubClient& setCallback(MQTT_CALLBACK_SIGNATURE);
-   PubSubClient& setClient(Client& client);
+   PubSubClient& setClient(Client& client) __attribute__ ((deprecated)); // should use ctor
    PubSubClient& setStream(Stream& stream);
 
 public:
