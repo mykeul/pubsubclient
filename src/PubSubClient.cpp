@@ -24,26 +24,26 @@ PubSubClient::PubSubClient(Client& client) {
     this->stream = NULL;
 }
 
-PubSubClient::PubSubClient(IPAddress addr, uint16_t port, Client& client) {
+PubSubClient::PubSubClient(const IPAddress& addr, uint16_t port, Client& client) {
     this->_state = MQTT_DISCONNECTED;
     setServer(addr, port);
     setClient(client);
     this->stream = NULL;
 }
-PubSubClient::PubSubClient(IPAddress addr, uint16_t port, Client& client, Stream& stream) {
+PubSubClient::PubSubClient(const IPAddress& addr, uint16_t port, Client& client, Stream& stream) {
     this->_state = MQTT_DISCONNECTED;
     setServer(addr,port);
     setClient(client);
     setStream(stream);
 }
-PubSubClient::PubSubClient(IPAddress addr, uint16_t port, MQTT_CALLBACK_SIGNATURE, Client& client) {
+PubSubClient::PubSubClient(const IPAddress& addr, uint16_t port, MQTT_CALLBACK_SIGNATURE, Client& client) {
     this->_state = MQTT_DISCONNECTED;
     setServer(addr, port);
     setCallback(callback);
     setClient(client);
     this->stream = NULL;
 }
-PubSubClient::PubSubClient(IPAddress addr, uint16_t port, MQTT_CALLBACK_SIGNATURE, Client& client, Stream& stream) {
+PubSubClient::PubSubClient(const IPAddress& addr, uint16_t port, MQTT_CALLBACK_SIGNATURE, Client& client, Stream& stream) {
     this->_state = MQTT_DISCONNECTED;
     setServer(addr,port);
     setCallback(callback);
@@ -568,7 +568,7 @@ PubSubClient& PubSubClient::setServer(uint8_t * ip, uint16_t port) {
     return setServer(addr,port);
 }
 
-PubSubClient& PubSubClient::setServer(IPAddress ip, uint16_t port) {
+PubSubClient& PubSubClient::setServer(const IPAddress& ip, uint16_t port) {
     this->ip = ip;
     this->port = port;
     this->domain = NULL;
