@@ -7,7 +7,6 @@
 #ifndef PubSubClient_h
 #define PubSubClient_h
 
-#include <Arduino.h>
 #include "IPAddress.h"
 #include "Client.h"
 #include "Stream.h"
@@ -120,28 +119,28 @@ public:
    PubSubClient& setStream(Stream& stream);
 
 public:
-   boolean connect(const char* id);
-   boolean connect(const char* id, const char* user, const char* pass);
-   boolean connect(const char* id, const char* willTopic, uint8_t willQos, boolean willRetain, const char* willMessage);
-   boolean connect(const char* id, const char* user, const char* pass, const char* willTopic, uint8_t willQos, boolean willRetain, const char* willMessage);
+   bool connect(const char* id);
+   bool connect(const char* id, const char* user, const char* pass);
+   bool connect(const char* id, const char* willTopic, uint8_t willQos, bool willRetain, const char* willMessage);
+   bool connect(const char* id, const char* user, const char* pass, const char* willTopic, uint8_t willQos, bool willRetain, const char* willMessage);
    void disconnect();
-   boolean publish(const char* topic, const char* payload);
-   boolean publish(const char* topic, const char* payload, boolean retained);
-   boolean publish(const char* topic, const uint8_t * payload, unsigned int plength);
-   boolean publish(const char* topic, const uint8_t * payload, unsigned int plength, boolean retained);
-   boolean publish_P(const char* topic, const uint8_t * payload, unsigned int plength, boolean retained);
-   boolean subscribe(const char* topic);
-   boolean subscribe(const char* topic, uint8_t qos);
-   boolean unsubscribe(const char* topic);
-   boolean loop();
-   boolean connected();
+   bool publish(const char* topic, const char* payload);
+   bool publish(const char* topic, const char* payload, bool retained);
+   bool publish(const char* topic, const uint8_t * payload, unsigned int plength);
+   bool publish(const char* topic, const uint8_t * payload, unsigned int plength, bool retained);
+   bool publish_P(const char* topic, const uint8_t * payload, unsigned int plength, bool retained);
+   bool subscribe(const char* topic);
+   bool subscribe(const char* topic, uint8_t qos);
+   bool unsubscribe(const char* topic);
+   bool loop();
+   bool connected();
    int state();
 
 private:
    uint16_t readPacket(uint8_t*);
-   boolean readByte(uint8_t * result);
-   boolean readByte(uint8_t * result, uint16_t * index);
-   boolean write(uint8_t header, uint8_t* buf, uint16_t length);
+   bool readByte(uint8_t * result);
+   bool readByte(uint8_t * result, uint16_t * index);
+   bool write(uint8_t header, uint8_t* buf, uint16_t length);
    uint16_t writeString(const char* string, uint8_t* buf, uint16_t pos);
 
 private:
