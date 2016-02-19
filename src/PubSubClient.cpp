@@ -5,7 +5,11 @@
 */
 
 #include "PubSubClient.h"
+
 #include "Arduino.h"
+#include "Client.h"
+#include "Stream.h"
+
 
 PubSubClient::PubSubClient() {
     this->_state = MQTT_DISCONNECTED;

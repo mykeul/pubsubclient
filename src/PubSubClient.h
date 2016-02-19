@@ -8,8 +8,9 @@
 #define PubSubClient_h
 
 #include "IPAddress.h"
-#include "Client.h"
-#include "Stream.h"
+
+class Client;
+class Stream;
 
 #define MQTT_VERSION_3_1      3
 #define MQTT_VERSION_3_1_1    4
