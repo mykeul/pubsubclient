@@ -11,98 +11,18 @@
 #include "Stream.h"
 
 
-PubSubClient::PubSubClient() {
-    this->_state = MQTT_DISCONNECTED;
-    this->_client = NULL;
-    this->stream = NULL;
-    setCallback(NULL);
-}
-
-PubSubClient::PubSubClient(Client& client) {
-    this->_state = MQTT_DISCONNECTED;
-    setClient(client);
-    this->stream = NULL;
-}
-
-PubSubClient::PubSubClient(const IPAddress& addr, uint16_t port, Client& client) {
-    this->_state = MQTT_DISCONNECTED;
-    setServer(addr, port);
-    setClient(client);
-    this->stream = NULL;
-}
-PubSubClient::PubSubClient(const IPAddress& addr, uint16_t port, Client& client, Stream& stream) {
-    this->_state = MQTT_DISCONNECTED;
-    setServer(addr,port);
-    setClient(client);
-    setStream(stream);
-}
-PubSubClient::PubSubClient(const IPAddress& addr, uint16_t port, MQTT_CALLBACK_SIGNATURE, Client& client) {
-    this->_state = MQTT_DISCONNECTED;
-    setServer(addr, port);
-    setCallback(callback);
-    setClient(client);
-    this->stream = NULL;
-}
-PubSubClient::PubSubClient(const IPAddress& addr, uint16_t port, MQTT_CALLBACK_SIGNATURE, Client& client, Stream& stream) {
-    this->_state = MQTT_DISCONNECTED;
-    setServer(addr,port);
-    setCallback(callback);
-    setClient(client);
-    setStream(stream);
-}
-
-PubSubClient::PubSubClient(uint8_t *ip, uint16_t port, Client& client) {
-    this->_state = MQTT_DISCONNECTED;
-    setServer(ip, port);
-    setClient(client);
-    this->stream = NULL;
-}
-PubSubClient::PubSubClient(uint8_t *ip, uint16_t port, Client& client, Stream& stream) {
-    this->_state = MQTT_DISCONNECTED;
-    setServer(ip,port);
-    setClient(client);
-    setStream(stream);
-}
-PubSubClient::PubSubClient(uint8_t *ip, uint16_t port, MQTT_CALLBACK_SIGNATURE, Client& client) {
-    this->_state = MQTT_DISCONNECTED;
-    setServer(ip, port);
-    setCallback(callback);
-    setClient(client);
-    this->stream = NULL;
-}
-PubSubClient::PubSubClient(uint8_t *ip, uint16_t port, MQTT_CALLBACK_SIGNATURE, Client& client, Stream& stream) {
-    this->_state = MQTT_DISCONNECTED;
-    setServer(ip,port);
-    setCallback(callback);
-    setClient(client);
-    setStream(stream);
-}
-
-PubSubClient::PubSubClient(const char* domain, uint16_t port, Client& client) {
-    this->_state = MQTT_DISCONNECTED;
-    setServer(domain,port);
-    setClient(client);
-    this->stream = NULL;
-}
-PubSubClient::PubSubClient(const char* domain, uint16_t port, Client& client, Stream& stream) {
-    this->_state = MQTT_DISCONNECTED;
-    setServer(domain,port);
-    setClient(client);
-    setStream(stream);
-}
-PubSubClient::PubSubClient(const char* domain, uint16_t port, MQTT_CALLBACK_SIGNATURE, Client& client) {
-    this->_state = MQTT_DISCONNECTED;
-    setServer(domain,port);
-    setCallback(callback);
-    setClient(client);
-    this->stream = NULL;
-}
-PubSubClient::PubSubClient(const char* domain, uint16_t port, MQTT_CALLBACK_SIGNATURE, Client& client, Stream& stream) {
-    this->_state = MQTT_DISCONNECTED;
-    setServer(domain,port);
-    setCallback(callback);
-    setClient(client);
-    setStream(stream);
+PubSubClient::PubSubClient(Client& client) :
+    _client(&client),
+    nextMsgId(0),
+    lastOutActivity(0),
+    lastInActivity(0),
+    pingOutstanding(false),
+    callback(NULL),
+    domain(NULL),
+    port(0),
+    stream(NULL),
+    _state(MQTT_DISCONNECTED)
+{
 }
 
 bool PubSubClient::connect(const char *id) {
@@ -563,11 +483,6 @@ bool PubSubClient::connected() {
     return rc;
 }
 
-PubSubClient& PubSubClient::setServer(uint8_t * ip, uint16_t port) {
-    IPAddress addr(ip[0],ip[1],ip[2],ip[3]);
-    return setServer(addr,port);
-}
-
 PubSubClient& PubSubClient::setServer(const IPAddress& ip, uint16_t port) {
     this->ip = ip;
     this->port = port;
@@ -583,11 +498,6 @@ PubSubClient& PubSubClient::setServer(const char * domain, uint16_t port) {
 
 PubSubClient& PubSubClient::setCallback(MQTT_CALLBACK_SIGNATURE) {
     this->callback = callback;
-    return *this;
-}
-
-PubSubClient& PubSubClient::setClient(Client& client){
-    this->_client = &client;
     return *this;
 }
 
