@@ -11,8 +11,9 @@
 #include "Stream.h"
 
 
-PubSubClient::PubSubClient(Client& client) :
+PubSubClient::PubSubClient(Client& client, Stream& stream) :
     _client(client),
+    _stream(stream),
     nextMsgId(0),
     lastOutActivity(0),
     lastInActivity(0),
@@ -20,7 +21,6 @@ PubSubClient::PubSubClient(Client& client) :
     callback(NULL),
     domain(NULL),
     port(0),
-    stream(NULL),
     _state(MQTT_DISCONNECTED)
 {
 }
@@ -191,10 +191,8 @@ uint16_t PubSubClient::readPacket(uint8_t* lengthLength) {
 
     for (uint16_t i = start;i<length;i++) {
         if(!readByte(&digit)) return 0;
-        if (this->stream) {
-            if (isPublish && len-*lengthLength-2>skip) {
-                this->stream->write(digit);
-            }
+        if (isPublish && len-*lengthLength-2>skip) {
+            _stream.write(digit);
         }
         if (len < MQTT_MAX_PACKET_SIZE) {
             buffer[len] = digit;
@@ -202,7 +200,7 @@ uint16_t PubSubClient::readPacket(uint8_t* lengthLength) {
         len++;
     }
 
-    if (!this->stream && len > MQTT_MAX_PACKET_SIZE) {
+    if (len > MQTT_MAX_PACKET_SIZE) {
         len = 0; // This will cause the packet to be ignored.
     }
 
@@ -493,11 +491,6 @@ PubSubClient& PubSubClient::setServer(const char * domain, uint16_t port) {
 
 PubSubClient& PubSubClient::setCallback(MQTT_CALLBACK_SIGNATURE) {
     this->callback = callback;
-    return *this;
-}
-
-PubSubClient& PubSubClient::setStream(Stream& stream){
-    this->stream = &stream;
     return *this;
 }
 

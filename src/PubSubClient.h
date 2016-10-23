@@ -83,6 +83,7 @@ class Stream;
 class PubSubClient {
 private:
    Client& _client;
+   Stream& _stream;
    uint8_t buffer[MQTT_MAX_PACKET_SIZE];
    uint16_t nextMsgId;
    unsigned long lastOutActivity;
@@ -92,17 +93,15 @@ private:
    IPAddress ip;
    const char* domain;
    uint16_t port;
-   Stream* stream;
    int _state;
 
 public:
-   explicit PubSubClient(Client& client);
+   PubSubClient(Client& client, Stream& stream);
 
 public:
    PubSubClient& setServer(const IPAddress& ip, uint16_t port);
    PubSubClient& setServer(const char * domain, uint16_t port);
    PubSubClient& setCallback(MQTT_CALLBACK_SIGNATURE);
-   PubSubClient& setStream(Stream& stream);
 
 public:
    bool connect(const char* id);
